@@ -171,11 +171,6 @@
       flex: 1;
       overflow-y: auto;
     }
-    .learn-card { display: none; }
-    .learn-card:first-child { display: block; }
-    .learn-card.visible { display: block; animation: slideUp 0.4s ease; }
-    .learn-quote { display: none; }
-    .learn-quote.visible { display: block; }
     .learn-card {
       background: var(--card-bg);
       border: 1px solid rgba(255,255,255,0.06);
@@ -928,23 +923,11 @@ function showLearn() {
   document.querySelectorAll('.color-nav-btn').forEach(b => b.classList.remove('active'));
   const firstBtn = document.querySelector('.color-nav-btn');
   if (firstBtn) firstBtn.classList.add('active');
-  document.querySelectorAll('.learn-card').forEach(c => c.classList.remove('visible'));
-  const firstCard = document.querySelector('.learn-card');
-  if (firstCard) firstCard.classList.add('visible');
-  document.querySelectorAll('.learn-quote').forEach(q => q.classList.remove('visible'));
-  const firstQuote = document.querySelector('.learn-quote');
-  if (firstQuote) firstQuote.classList.add('visible');
 }
 
 function scrollToColor(colorId, btn) {
   document.querySelectorAll('.color-nav-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  document.querySelectorAll('.learn-card').forEach(c => {
-    c.classList.toggle('visible', c.dataset.color === colorId);
-  });
-  const firstQuote = document.querySelector('.learn-quote');
-  document.querySelectorAll('.learn-quote').forEach(q => q.classList.remove('visible'));
-  if (firstQuote) firstQuote.classList.add('visible');
   const card = document.getElementById('card-' + colorId);
   if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
