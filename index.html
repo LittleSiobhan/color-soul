@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>色彩心灵 · Color Mind</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --card-bg: rgba(255,255,255,0.04);
+      --text: #e8e4df;
+      --text-dim: rgba(232,228,223,0.5);
+      --accent: #c9a96e;
+      --red: #e74c3c;
+      --blue: #4a9eff;
+      --yellow: #f1c40f;
+      --green: #27ae60;
+      --purple: #9b59b6;
+      --orange: #e67e22;
+      --pink: #fd79a8;
+      --teal: #1abc9c;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Noto Sans SC', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      overflow-x: hidden;
+    }
+
+    /* Scene system */
+    .scene {
+      display: none;
+      min-height: 100dvh;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      animation: fadeIn 0.5s ease;
+    }
+    .scene.active { display: flex; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+    @keyframes shimmer { 0%{background-position:-200% center} 100%{background-position:200% center} }
+
+    /* ── INTRO ── */
+    #intro { gap: 24px; text-align: center; }
+    .intro-badge {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(201,169,110,0.1);
+      border: 1px solid rgba(201,169,110,0.3);
+      padding: 6px 16px;
+      border-radius: 100px;
+    }
+    .intro-title {
+      font-family: 'Noto Serif SC', serif;
+      font-size: clamp(32px, 8vw, 56px);
+      font-weight: 700;
+      line-height: 1.2;
+      background: linear-gradient(135deg, #c9a96e 0%, #f1c40f 30%, #e74c3c 60%, #9b59b6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .intro-sub {
+      font-size: 15px;
+      color: var(--text-dim);
+      max-width: 320px;
+      line-height: 1.7;
+    }
+    .intro-swatches {
+      display: flex;
+      gap: 12px;
+      animation: float 3s ease-in-out infinite;
+    }
+    .swatch {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #c9a96e, #a07830);
+      color: #0a0a0f;
+      border: none;
+      padding: 16px 48px;
+      font-size: 16px;
+      font-weight: 700;
+      border-radius: 100px;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: all 0.3s;
+      box-shadow: 0 4px 24px rgba(201,169,110,0.3);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(201,169,110,0.5); }
+    .intro-count {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: -8px;
+    }
+
+    /* ── LEARN ── */
+    #learn {
+      gap: 0;
+      justify-content: flex-start;
+      padding-top: 0;
+      padding-bottom: 40px;
+      overflow-y: auto;
+      height: 100dvh;
+    }
+    #learn > .learn-header {
+      flex-shrink: 0;
+      text-align: center;
+      padding: 68px 16px 12px;
+    }
+    #learn > .color-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(10,10,15,0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 10px 16px;
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    #learn > .color-nav::-webkit-scrollbar { display: none; }
+    .learn-header {
+      text-align: center;
+      padding: 0 16px;
+    }
+    .learn-badge {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(201,169,110,0.1);
+      border: 1px solid rgba(201,169,110,0.3);
+      padding: 6px 16px;
+      border-radius: 100px;
+      display: inline-block;
+      margin-bottom: 16px;
+    }
+    .learn-title {
+      font-family: 'Noto Serif SC', serif;
+      font-size: clamp(24px, 6vw, 36px);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .learn-scroll {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+      max-width: 520px;
+      padding: 68px 16px 20px;
+      flex: 1;
+      overflow-y: auto;
+    }
+    .learn-card { display: none; }
+    .learn-card.visible { display: block; animation: slideUp 0.4s ease; }
+    .learn-quote { display: none; }
+    .learn-quote.visible { display: block; }
+    .learn-card {
+      background: var(--card-bg);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 20px;
+      overflow: hidden;
+      padding: 20px;
+      text-align: center;
+      transition: transform 0.3s;
+      animation: slideUp 0.5s ease both;
+    }
+    .learn-card:hover { transform: translateY(-4px); }
+    .learn-color-bar {
+      height: 4px;
+      border-radius: 2px;
+      margin-bottom: 16px;
+    }
+    .learn-emoji { font-size: 36px; margin-bottom: 8px; }
+    .learn-color-name {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .learn-fact {
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--text-dim);
+      text-align: left;
+    }
+    .learn-quote {
+      background: rgba(201,169,110,0.05);
+      border: 1px solid rgba(201,169,110,0.15);
+      border-radius: 20px;
+      padding: 24px;
+      text-align: center;
+      margin: 8px 0;
+    }
+    .learn-quote-icon { font-size: 32px; color: var(--accent); margin-bottom: 8px; }
+    .learn-quote-text {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text);
+      font-style: italic;
+      margin-bottom: 12px;
+    }
+    .learn-quote-author { font-size: 12px; color: var(--text-dim); }
+    .learn-skip {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 8px;
+    }
+    .learn-skip a { color: var(--accent); text-decoration: none; }
+
+    .learn-intro-sub {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 8px;
+    }
+    .color-nav {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 4px 16px;
+      width: 100%;
+      max-width: 520px;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .color-nav::-webkit-scrollbar { display: none; }
+    .color-nav-btn .nav-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 5px;
+      flex-shrink: 0;
+    }
+    .color-nav-btn {
+      display: inline-flex;
+      align-items: center;
+      flex-shrink: 0;
+      padding: 6px 12px;
+      border-radius: 100px;
+      border: 1.5px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04);
+      color: var(--text-dim);
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .color-nav-btn:hover,
+    .color-nav-btn.active {
+      border-color: var(--c);
+      color: var(--c);
+      background: color-mix(in srgb, var(--c) 12%, transparent);
+    }
+    .learn-bottom {
+      flex-shrink: 0;
+      padding: 16px;
+      text-align: center;
+    }
+
+    /* ── TEST ── */
+    #test { gap: 20px; width: 100%; max-width: 600px; }
+    .progress-bar {
+      width: 100%;
+      height: 3px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--yellow));
+      border-radius: 2px;
+      transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+    }
+    .progress-label {
+      font-size: 12px;
+      color: var(--text-dim);
+      align-self: flex-end;
+    }
+    .progress-row { width: 100%; display: flex; align-items: center; gap: 12px; }
+
+    .question-card {
+      background: var(--card-bg);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 24px;
+      padding: 32px 24px;
+      width: 100%;
+      animation: slideUp 0.4s ease;
+    }
+    .q-number {
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .q-text {
+      font-family: 'Noto Serif SC', serif;
+      font-size: clamp(18px, 5vw, 24px);
+      font-weight: 600;
+      line-height: 1.5;
+      margin-bottom: 28px;
+    }
+    .q-sub {
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-top: -20px;
+      margin-bottom: 24px;
+    }
+
+    .options { display: flex; flex-direction: column; gap: 10px; }
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 15px;
+      line-height: 1.5;
+      text-align: left;
+    }
+    .option:hover {
+      background: rgba(255,255,255,0.07);
+      border-color: rgba(201,169,110,0.4);
+      transform: translateX(4px);
+    }
+    .option.selected {
+      border-color: var(--accent);
+      background: rgba(201,169,110,0.12);
+    }
+    .option-icon {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    /* ── RESULT ── */
+    #result { gap: 20px; text-align: center; max-width: 520px; width: 100%; }
+    .result-card {
+      background: var(--card-bg);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 28px;
+      padding: 36px 28px;
+      width: 100%;
+      animation: slideUp 0.6s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .result-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      border-radius: 28px 28px 0 0;
+    }
+    .result-avatar-ring {
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 48px;
+      animation: pulse 2.5s ease-in-out infinite;
+      position: relative;
+    }
+    .result-avatar-ring::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 2px solid;
+      opacity: 0.4;
+      animation: pulse 2.5s ease-in-out infinite 0.3s;
+    }
+    .result-type {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+    .result-name {
+      font-family: 'Noto Serif SC', serif;
+      font-size: clamp(28px, 7vw, 40px);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .result-subtitle {
+      font-size: 15px;
+      color: var(--text-dim);
+      margin-bottom: 24px;
+    }
+    .result-desc {
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--text-dim);
+      padding: 20px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 14px;
+      text-align: left;
+      margin-bottom: 24px;
+    }
+    .result-desc strong { color: var(--text); }
+
+    .trait-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 24px; }
+    .trait-tag {
+      padding: 5px 14px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 500;
+      border: 1px solid;
+      opacity: 0.85;
+    }
+
+    .color-spectrum {
+      display: flex;
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .color-spectrum span {
+      flex: 1;
+      display: block;
+    }
+    .spectrum-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    .result-actions { display: flex; gap: 12px; width: 100%; }
+    .btn-secondary {
+      flex: 1;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text);
+      padding: 14px;
+      border-radius: 14px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+
+    /* ── BACKGROUND ORBS ── */
+    .bg-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.15;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .bg-orb-1 { width: 300px; height: 300px; background: var(--red); top: -100px; right: -80px; }
+    .bg-orb-2 { width: 250px; height: 250px; background: var(--blue); bottom: -80px; left: -80px; }
+    .bg-orb-3 { width: 200px; height: 200px; background: var(--purple); top: 40%; left: 60%; }
+
+    /* ── SHARE CARD ── */
+    .share-hint {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 12px;
+    }
+  </style>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+</head>
+<body>
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+  <div class="bg-orb bg-orb-3"></div>
+
+  <!-- INTRO -->
+  <div id="intro" class="scene active">
+    <div class="intro-badge">基于《色彩的性格》</div>
+    <h1 class="intro-title">色彩心灵<br>Color Mind</h1>
+    <p class="intro-sub">12道情境题，发现你的色彩人格。颜色是最诚实的语言，它早已出卖了你的性格。</p>
+    <div class="intro-swatches">
+      <div class="swatch" style="background:#e74c3c"></div>
+      <div class="swatch" style="background:#4a9eff"></div>
+      <div class="swatch" style="background:#f1c40f"></div>
+      <div class="swatch" style="background:#27ae60"></div>
+      <div class="swatch" style="background:#9b59b6"></div>
+    </div>
+    <button class="btn-primary" onclick="showLearn()">先学色彩知识</button>
+    <div class="intro-count">约3分钟 · 12道题 · 5种人格</div>
+  </div>
+
+  <!-- LEARN -->
+  <div id="learn" class="scene">
+    <div class="learn-header">
+      <div class="learn-badge">色彩心理学</div>
+      <h2 class="learn-title">颜色的秘密</h2>
+      <p class="learn-intro-sub">基于《色彩的性格》· 爱娃·海勒｜10种颜色的完整解读</p>
+    </div>
+
+    <!-- Color Nav Buttons -->
+    <div class="color-nav" id="colorNav">
+      <button class="color-nav-btn active" style="--c:#e74c3c" onclick="scrollToColor('red',this)"><span class="nav-dot" style="background:#e74c3c"></span>红</button>
+      <button class="color-nav-btn" style="--c:#4a9eff" onclick="scrollToColor('blue',this)"><span class="nav-dot" style="background:#4a9eff"></span>蓝</button>
+      <button class="color-nav-btn" style="--c:#f1c40f" onclick="scrollToColor('yellow',this)"><span class="nav-dot" style="background:#f1c40f"></span>黄</button>
+      <button class="color-nav-btn" style="--c:#27ae60" onclick="scrollToColor('green',this)"><span class="nav-dot" style="background:#27ae60"></span>绿</button>
+      <button class="color-nav-btn" style="--c:#2c2c2c" onclick="scrollToColor('black',this)"><span class="nav-dot" style="background:#2c2c2c"></span>黑</button>
+      <button class="color-nav-btn" style="--c:#95a5a6" onclick="scrollToColor('white',this)"><span class="nav-dot" style="background:#95a5a6"></span>白</button>
+      <button class="color-nav-btn" style="--c:#9b59b6" onclick="scrollToColor('purple',this)"><span class="nav-dot" style="background:#9b59b6"></span>紫</button>
+      <button class="color-nav-btn" style="--c:#e67e22" onclick="scrollToColor('orange',this)"><span class="nav-dot" style="background:#e67e22"></span>橙</button>
+      <button class="color-nav-btn" style="--c:#fd79a8" onclick="scrollToColor('pink',this)"><span class="nav-dot" style="background:#fd79a8"></span>粉</button>
+    </div>
+
+    <div class="learn-scroll" id="learnScroll">
+      <div class="learn-card" data-color="red" id="card-red">
+        <div class="learn-color-bar" style="background:#e74c3c"></div>
+        <div class="learn-emoji">❤️</div>
+        <div class="learn-color-name" style="color:#e74c3c">红色 · RED</div>
+        <div class="learn-fact">最有力的颜色，情感跨度最大——情欲到暴力，美丽到危险，可口可乐的红让它成为全球最具识别度的品牌色。<br><br><strong>代表情感：</strong>正面=爱情、激情、勇气、活力；负面=危险、战争、血腥、禁止。<br><br><strong>心理效果：</strong>刺激神经系统，加速心跳，提高肌肉张力，增加食欲——这就是为什么快餐店（麦当劳、肯德基）普遍用红色的原因。<br><br><strong>著名用例：</strong>可口可乐、红十字会、红绿灯"停"、斗牛士红布、中国红包。</div>
+      </div>
+
+      <div class="learn-card" data-color="blue" id="card-blue">
+        <div class="learn-color-bar" style="background:#4a9eff"></div>
+        <div class="learn-emoji">💙</div>
+        <div class="learn-color-name" style="color:#4a9eff">蓝色 · BLUE</div>
+        <div class="learn-fact">全球最受欢迎的颜色，约41%的人把蓝色选为最喜欢的颜色，是科技、金融、医疗行业的御用色。<br><br><strong>代表情感：</strong>正面=信任、稳定、冷静、专业；负面=悲伤、冷淡、忧郁、孤独（蓝调音乐 blues）。<br><br><strong>心理效果：</strong>蓝色能降低焦虑，镇静神经。实验证明，举重者在蓝色房间比红色房间能举起更重的重量。<br><br><strong>著名用例：</strong>IBM（蓝色巨人）、Facebook、Twitter、LinkedIn、蓝色牛仔裤（Levi's）。</div>
+      </div>
+
+      <div class="learn-card" data-color="yellow" id="card-yellow">
+        <div class="learn-color-bar" style="background:#f1c40f"></div>
+        <div class="learn-emoji">💛</div>
+        <div class="learn-color-name" style="color:#f1c40f">黄色 · YELLOW</div>
+        <div class="learn-fact">人类视网膜对黄光最敏感，是最容易吸引注意力的颜色，也是最"矛盾"的颜色之一——东西方文化中含义几乎相反。<br><br><strong>代表情感：</strong>正面=快乐、阳光、温暖、活力；负面=嫉妒、背叛、欺骗、疯狂。<br><br><strong>心理效果：</strong>最容易被眼睛捕捉，广泛用于警示标志（交通锥、黄灯）。黄色房间提升注意力，绿色房间提升记忆力。<br><br><strong>著名用例：</strong>黄出租车（纽约）、小黄鸭（浴室）、向日葵、"黄粱梦"（中国成语）。</div>
+      </div>
+
+      <div class="learn-card" data-color="green" id="card-green">
+        <div class="learn-color-bar" style="background:#27ae60"></div>
+        <div class="learn-emoji">💚</div>
+        <div class="learn-color-name" style="color:#27ae60">绿色 · GREEN</div>
+        <div class="learn-fact">最平衡、最"中性"的颜色，在自然联想中得分最高，是跨文化冲突最少的颜色之一。<br><br><strong>代表情感：</strong>正面=自然、健康、成长、希望；负面=嫉妒（green with envy 嫉妒得发绿）、绿帽子（被背叛的配偶）。<br><br><strong>心理效果：</strong>最接近大自然的颜色，让人感到平静、安全，有助于放松和恢复精力。<br><br><strong>著名用例：</strong>绿色美元/欧元纸币、绿色和平组织、绿灯（通行）、星巴克绿美人鱼。</div>
+      </div>
+
+      <div class="learn-card" data-color="black" id="card-black">
+        <div class="learn-color-bar" style="background:#2c2c2c"></div>
+        <div class="learn-emoji">⚫</div>
+        <div class="learn-color-name" style="color:#aaa">黑色 · BLACK</div>
+        <div class="learn-fact">时尚界最爱、历史最悠久的颜色之一，在所有文化中都同时代表最高贵和最邪恶的事物。<br><br><strong>代表情感：</strong>正面=优雅、权力、神秘、正式；负面=死亡、邪恶、哀悼、黑暗。<br><br><strong>心理效果：</strong>黑色显瘦（时尚首选）、代表权威（正式场合）、营造深度和神秘感。<br><br><strong>著名用例：</strong>小黑裙（香奈儿）、奥斯卡黑色礼服、Hermès 黑色丝巾。</div>
+      </div>
+
+      <div class="learn-card" data-color="white" id="card-white">
+        <div class="learn-color-bar" style="background:#ecf0f1"></div>
+        <div class="learn-emoji">⚪</div>
+        <div class="learn-color-name" style="color:#ccc">白色 · WHITE</div>
+        <div class="learn-fact">最"干净"的文化符号，也是全球文化差异最大的颜色——某些文化里代表婚礼，另一些文化里代表葬礼。<br><br><strong>代表情感：</strong>正面=纯洁、天真、干净、完美；负面=死亡、空虚、冷漠、苍白。<br><br><strong>心理效果：</strong>白色让人联想到消毒和清洁，是医疗场所普遍使用白色的原因，能引发"干净"的本能反应。<br><br><strong>著名用例：</strong>白色婚纱（西方婚礼）、白宫、医学白大褂、日本婚礼白无垢。</div>
+      </div>
+
+      <div class="learn-card" data-color="purple" id="card-purple">
+        <div class="learn-color-bar" style="background:#9b59b6"></div>
+        <div class="learn-emoji">💜</div>
+        <div class="learn-color-name" style="color:#9b59b6">紫色 · PURPLE</div>
+        <div class="learn-fact">最"矛盾"的颜色之一，高贵与做作并存。古代欧洲是权力象征，现代则是"独特品味"的代表色。<br><br><strong>代表情感：</strong>正面=尊贵、神秘、创造力、皇权；负面=自负、矫情、怪异、色情。<br><br><strong>心理效果：</strong>紫色结合了红的刺激和蓝的冷静，对神经系统有独特作用，能提升创造力和直觉。<br><br><strong>著名用例：</strong>紫禁城（中国皇权）、骨螺紫（古代欧洲皇室）、Cadbury 紫巧克力、骚灵音乐（Soul）。</div>
+      </div>
+
+      <div class="learn-card" data-color="orange" id="card-orange">
+        <div class="learn-color-bar" style="background:#e67e22"></div>
+        <div class="learn-emoji">🟠</div>
+        <div class="learn-color-name" style="color:#e67e22">橙色 · ORANGE</div>
+        <div class="learn-fact">在活力与廉价之间摇摆的颜色——用对了显得热情亲民，用错了显得俗气低档。在亚洲文化中地位崇高。<br><br><strong>代表情感：</strong>正面=活力、热情、创造力、温暖；负面=廉价、俗气、浮躁。<br><br><strong>心理效果：</strong>橙红色刺激食欲（介于红的刺激和黄的愉悦之间），是很多食品品牌的首选色。<br><br><strong>著名用例：</strong>印度=橙色（佛教僧袍，神圣）；荷兰=橙色（皇室）；爱马仕橙盒、Fanta 橙汽水。</div>
+      </div>
+
+      <div class="learn-card" data-color="pink" id="card-pink">
+        <div class="learn-color-bar" style="background:#fd79a8"></div>
+        <div class="learn-emoji">🩷</div>
+        <div class="learn-color-name" style="color:#fd79a8">粉红色 · PINK</div>
+        <div class="learn-fact">唯一一个以花朵命名的颜色（粉色康乃馨），也是性别标签最强的颜色，不同文化中含义差异极大。<br><br><strong>代表情感：</strong>正面=浪漫、温柔、女性、甜美；负面=柔弱、幼稚、脂粉气、无聊。<br><br><strong>心理效果：</strong>粉色有镇静作用，研究发现粉色房间能让人的攻击性降低，被称为"害羞的粉"。<br><br><strong>著名用例：</strong>粉红运动（女性主义）、"粉红税"（女性用品往往比男性贵）、Tiffany 粉。</div>
+      </div>
+      <div class="learn-quote">
+        <div class="learn-quote-icon">❝</div>
+        <div class="learn-quote-text">"同一抹红，可以是情欲，也可以是暴力；可以美丽，也可以危险。"</div>
+        <div class="learn-quote-author">— 爱娃·海勒《色彩的性格》</div>
+      </div>
+    </div>  <!-- close learn-scroll -->
+    <div class="learn-bottom">
+      <button class="btn-primary" id="testStartBtn" onclick="startTest()">开始测试 →</button>
+      <div class="learn-skip">已经了解？<a href="#" onclick="startTest();return false;">跳过直接测试</a></div>
+    </div>
+  </div>
+
+  <!-- TEST -->
+  <div id="test" class="scene">
+    <div class="progress-row">
+      <div class="progress-bar" style="flex:1"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-label" id="progressLabel">1/12</div>
+    </div>
+    <div class="question-card">
+      <div class="q-number" id="qNumber">题 1</div>
+      <div class="q-text" id="qText"></div>
+      <div class="q-sub" id="qSub"></div>
+      <div class="options" id="options"></div>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="result" class="scene">
+    <div class="result-card" id="resultCard">
+      <div class="result-avatar-ring" id="resultRing">🧠</div>
+      <div class="result-type">你的色彩人格</div>
+      <div class="result-name" id="resultName"></div>
+      <div class="result-subtitle" id="resultSubtitle"></div>
+      <div class="trait-row" id="traitRow"></div>
+      <div class="color-spectrum" id="colorSpectrum"></div>
+      <div class="spectrum-labels"><span>红色型</span><span>蓝色型</span><span>黄色型</span><span>绿色型</span><span>紫色型</span></div>
+      <div class="result-desc" id="resultDesc"></div>
+    </div>
+    <div class="result-actions">
+      <button class="btn-secondary" onclick="restart()">重新测试</button>
+      <button class="btn-secondary" onclick="shareResult()">分享结果</button>
+    </div>
+    <div class="share-hint">长按保存你的色彩人格卡</div>
+  </div>
+
+<script>
+/* ── PERSONALITY DATA ── */
+const PERSONALITIES = {
+  red: {
+    name: '烈焰型', emoji: '🔥', subtitle: '生命的燃烧者',
+    color: '#e74c3c', css: 'linear-gradient(135deg,#e74c3c,#c0392b)',
+    traits: ['激情', '直觉', '勇敢', '果断', '冲动'],
+    desc: `<strong>你是一团无法被扑灭的火焰。</strong>，情绪浓烈，爱恨分明，你的人生信条是"要么全力以赴，要么干脆不做"。你对世界充满感受力，容易被打动，也容易感到挫败。<br><br>你的优势：敢想敢干，行动力极强，直觉敏锐。<br>你的盲点：有时太冲动，不懂得"等一等"的智慧。`,
+    scores: { red: 90, blue: 40, yellow: 60, green: 50, purple: 70 }
+  },
+  blue: {
+    name: '深海型', emoji: '🌊', subtitle: '信任的守护者',
+    color: '#4a9eff', css: 'linear-gradient(135deg,#4a9eff,#2980b9)',
+    traits: ['理性', '沉稳', '洞察', '忠诚', '内敛'],
+    desc: `<strong>你是深海，沉静而有力量。</strong>你不轻易表露情绪，但内心世界极为丰富。你善于倾听，更善于思考——你总是能看到别人忽略的细节。<br><br>你的优势：冷静分析，值得信赖，洞察力极强。<br>你的盲点：有时想太多，反而错失行动的最佳时机。`,
+    scores: { red: 40, blue: 90, yellow: 40, green: 70, purple: 60 }
+  },
+  yellow: {
+    name: '阳光型', emoji: '☀️', subtitle: '阳光的传播者',
+    color: '#f1c40f', css: 'linear-gradient(135deg,#f1c40f,#f39c12)',
+    traits: ['乐观', '创意', '跳跃', '热情', '灵活'],
+    desc: `<strong>你是照进房间的那束光。</strong>你总能在平凡中发现有趣的事，你的思维像烟花一样四处绽放。你害怕无聊，追求新鲜感，有时候会因为想得太多而难以专注。<br><br>你的优势：创意十足，社交能力强，永远保持乐观。<br>你的盲点：三分钟热度，难以坚持长期目标。`,
+    scores: { red: 60, blue: 40, yellow: 90, green: 50, purple: 50 }
+  },
+  green: {
+    name: '大地型', emoji: '🌿', subtitle: '和平的践行者',
+    color: '#27ae60', css: 'linear-gradient(135deg,#27ae60,#1e8449)',
+    traits: ['踏实', '务实', '稳定', '包容', '耐心'],
+    desc: `<strong>你是大地，可靠而包容。</strong>你不追名逐利，你知道生活中真正重要的东西。你的耐心是别人没有的天赋，你总能在混乱中保持冷静。<br><br>你的优势：极度可靠，情绪稳定，善于调和矛盾。<br>你的盲点：过于保守，害怕风险，错失突破性机会。`,
+    scores: { red: 40, blue: 60, yellow: 50, green: 90, purple: 40 }
+  },
+  purple: {
+    name: '紫晶型', emoji: '💜', subtitle: '神秘的艺术家',
+    color: '#9b59b6', css: 'linear-gradient(135deg,#9b59b6,#8e44ad)',
+    traits: ['敏感', '创意', '直觉', '艺术', '深刻'],
+    desc: `<strong>你是紫晶，神秘而深邃。</strong>你对美有天然的感知，对情感有细腻的捕捉。你是那个会在画作前驻足、会被音乐触动、在人群中一眼看到"不一样"的人。<br><br>你的优势：艺术天赋，共情能力极强，思维独特。<br>你的盲点：容易自我封闭，活在内心世界里难以自拔。`,
+    scores: { red: 60, blue: 60, yellow: 50, green: 40, purple: 90 }
+  }
+};
+
+/* ── QUESTIONS ── */
+const QUESTIONS = [
+  {
+    q: '清晨醒来，你最想要看到窗外是什么天气？',
+    sub: '想象一下，是你真实的渴望',
+    opts: [
+      { text: '阳光灿烂，万里无云', icon: '☀️', scores: { yellow: 3, red: 1 } },
+      { text: '下着细雨，安静湿润', icon: '🌧️', scores: { blue: 3, green: 1 } },
+      { text: '阴天，但空气清新', icon: '🌥️', scores: { green: 3, blue: 1 } },
+      { text: '无所谓，窗帘拉上就好', icon: '😴', scores: { purple: 3, green: 1 } },
+    ]
+  },
+  {
+    q: '你走进一家餐厅，服务员问你要喝什么？',
+    sub: '你最直觉的反应是',
+    opts: [
+      { text: '红酒，烈一点的那种', icon: '🍷', scores: { red: 3, purple: 1 } },
+      { text: '白葡萄酒或香槟', icon: '🥂', scores: { blue: 2, yellow: 1, purple: 1 } },
+      { text: '热茶或手冲咖啡', icon: '🍵', scores: { green: 3, blue: 1 } },
+      { text: '一杯气泡水就好', icon: '💧', scores: { green: 2, blue: 2 } },
+    ]
+  },
+  {
+    q: '你的朋友向你倾诉心事，你会？',
+    sub: '真实反应，没有对错',
+    opts: [
+      { text: '认真听完，给出实际建议', icon: '💡', scores: { blue: 3, green: 1 } },
+      { text: '感同身受，陪她一起哭', icon: '😢', scores: { red: 2, purple: 2 } },
+      { text: '想办法让她开心起来', icon: '😄', scores: { yellow: 3, red: 1 } },
+      { text: '静静陪伴，不需要说话', icon: '🤲', scores: { green: 3, blue: 1 } },
+    ]
+  },
+  {
+    q: '你的房间最可能有哪个色调？',
+    sub: '你最自在的空间是',
+    opts: [
+      { text: '白色为主，简约干净', icon: '⚪', scores: { blue: 3, green: 1 } },
+      { text: '暖黄灯光，木质家具', icon: '🟡', scores: { yellow: 2, green: 2 } },
+      { text: '深色墙面，有质感的摆设', icon: '⚫', scores: { purple: 3, red: 1 } },
+      { text: '绿植环绕，自然气息', icon: '🌿', scores: { green: 3, yellow: 1 } },
+    ]
+  },
+  {
+    q: '你在工作群里发了一段很长的方案，结果群里一片沉默，你会？',
+    sub: '真实反应，不要修饰',
+    opts: [
+      { text: '有点尴尬，怀疑自己是不是说错了', icon: '😰', scores: { purple: 2, blue: 2 } },
+      { text: '再发一条补充说明，解释清楚', icon: '✍️', scores: { blue: 3, green: 1 } },
+      { text: '无所谓，反正我说完了', icon: '😤', scores: { red: 3, yellow: 1 } },
+      { text: '等一下看有没有人回应再说', icon: '⏳', scores: { green: 3, blue: 1 } },
+    ]
+  },
+  {
+    q: '你被邀请去一个全是陌生人的聚会，你会？',
+    sub: '本能反应',
+    opts: [
+      { text: '兴奋！认识新朋友超有意思', icon: '🎉', scores: { yellow: 3, red: 1 } },
+      { text: '假装有事，推掉算了', icon: '🙈', scores: { green: 2, purple: 2 } },
+      { text: '准时到，观察环境再行动', icon: '🔍', scores: { blue: 3, green: 1 } },
+      { text: '找个认识的人待在一起', icon: '🤝', scores: { green: 3, blue: 1 } },
+    ]
+  },
+  {
+    q: '你买新手机，最可能选哪个颜色？',
+    sub: '不需要理由，就是它了',
+    opts: [
+      { text: '黑色或深灰，低调沉稳', icon: '⚫', scores: { purple: 2, blue: 2 } },
+      { text: '红色或橙色，醒目张扬', icon: '🔴', scores: { red: 3, yellow: 1 } },
+      { text: '绿色或蓝色，经典耐看', icon: '💚', scores: { green: 2, blue: 2 } },
+      { text: '紫色或粉色，独特不撞款', icon: '💜', scores: { purple: 3, yellow: 1 } },
+    ]
+  },
+  {
+    q: '你读到一首诗，是什么类型的？',
+    sub: '最能打动你的是',
+    opts: [
+      { text: '关于宇宙、永恒、生命的宏大叙事', icon: '🌌', scores: { purple: 3, blue: 1 } },
+      { text: '关于孤独、自由、燃烧的激情', icon: '🔥', scores: { red: 3, purple: 1 } },
+      { text: '关于阳光、海风、简单的快乐', icon: '🌻', scores: { yellow: 3, green: 1 } },
+      { text: '关于家、泥土、四季的轮回', icon: '🍂', scores: { green: 3, blue: 1 } },
+    ]
+  },
+  {
+    q: '你决定周末去旅行，你更想去？',
+    sub: '心里的声音是',
+    opts: [
+      { text: '云南大理，看苍山洱海发呆', icon: '🏔️', scores: { green: 3, blue: 1 } },
+      { text: '东京或首尔，逛街吃美食', icon: '🌃', scores: { yellow: 3, red: 1 } },
+      { text: '巴黎或佛罗伦萨，看艺术馆', icon: '🖼️', scores: { purple: 3, blue: 1 } },
+      { text: '新疆或西藏，壮阔wild', icon: '🏜️', scores: { red: 2, purple: 2 } },
+    ]
+  },
+  {
+    q: '你最近一次哭，是因为什么？',
+    sub: '没有记录的话，想象一下',
+    opts: [
+      { text: '一部电影、小说或音乐', icon: '🎬', scores: { purple: 3, red: 1 } },
+      { text: '被人伤害或误解', icon: '💔', scores: { red: 2, blue: 2 } },
+      { text: '一个温暖的瞬间', icon: '🥹', scores: { green: 2, yellow: 2 } },
+      { text: '我已经很久没哭了', icon: '🧊', scores: { blue: 2, green: 2 } },
+    ]
+  },
+  {
+    q: '你被安排做一个重要演讲，你会？',
+    sub: '准备过程最能暴露性格',
+    opts: [
+      { text: '反复练习，精确到每一个停顿', icon: '📝', scores: { blue: 3, green: 1 } },
+      { text: '列个大纲，临场发挥', icon: '🎯', scores: { yellow: 2, red: 2 } },
+      { text: '紧张到想放弃，但还是硬着头皮上', icon: '😰', scores: { red: 2, purple: 2 } },
+      { text: '先收集素材，整理逻辑', icon: '📚', scores: { blue: 2, green: 2 } },
+    ]
+  },
+  {
+    q: '你选择工作的最重要标准是？',
+    sub: '没有完美工作，优先级是什么',
+    opts: [
+      { text: '薪酬和晋升空间', icon: '💰', scores: { red: 3, blue: 1 } },
+      { text: '自由度和创造空间', icon: '🌀', scores: { yellow: 2, purple: 2 } },
+      { text: '稳定和安全感', icon: '🏠', scores: { green: 3, blue: 1 } },
+      { text: '意义感和成长空间', icon: '🌱', scores: { purple: 2, blue: 2 } },
+    ]
+  },
+];
+
+/* ── STATE ── */
+let currentQ = 0;
+let scores = { red: 0, blue: 0, yellow: 0, green: 0, purple: 0 };
+
+function showScene(id) {
+  document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startTest() {
+  scores = { red: 0, blue: 0, yellow: 0, green: 0, purple: 0 };
+  currentQ = 0;
+  showScene('test');
+  renderQ();
+}
+window.testBtnClicked = false;
+document.addEventListener('DOMContentLoaded', function() {
+  var btn = document.getElementById('testStartBtn');
+  if (btn) {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      window.testBtnClicked = true;
+      startTest();
+    });
+  }
+  var skipBtn = document.querySelector('.learn-skip a');
+  if (skipBtn) {
+    skipBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      startTest();
+    });
+  }
+});
+
+function showLearn() {
+  showScene('learn');
+  document.querySelectorAll('.color-nav-btn').forEach(b => b.classList.remove('active'));
+  const firstBtn = document.querySelector('.color-nav-btn');
+  if (firstBtn) firstBtn.classList.add('active');
+  document.querySelectorAll('.learn-card').forEach(c => c.classList.remove('visible'));
+  const firstCard = document.querySelector('.learn-card');
+  if (firstCard) firstCard.classList.add('visible');
+  document.querySelectorAll('.learn-quote').forEach(q => q.classList.remove('visible'));
+  const firstQuote = document.querySelector('.learn-quote');
+  if (firstQuote) firstQuote.classList.add('visible');
+}
+
+function scrollToColor(colorId, btn) {
+  document.querySelectorAll('.color-nav-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.learn-card').forEach(c => {
+    c.classList.toggle('visible', c.dataset.color === colorId);
+  });
+  const firstQuote = document.querySelector('.learn-quote');
+  document.querySelectorAll('.learn-quote').forEach(q => q.classList.remove('visible'));
+  if (firstQuote) firstQuote.classList.add('visible');
+  const card = document.getElementById('card-' + colorId);
+  if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderQ() {
+  const q = QUESTIONS[currentQ];
+  document.getElementById('qNumber').textContent = `题 ${currentQ + 1}`;
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('qSub').textContent = q.sub;
+  document.getElementById('progressLabel').textContent = `${currentQ + 1}/${QUESTIONS.length}`;
+  document.getElementById('progressFill').style.width = `${((currentQ) / QUESTIONS.length) * 100}%`;
+
+  const optsEl = document.getElementById('options');
+  optsEl.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.innerHTML = `<span class="option-icon" style="background:${getOptionBg(i)}">${opt.icon}</span><span>${opt.text}</span>`;
+    btn.onclick = () => selectOpt(opt, btn);
+    optsEl.appendChild(btn);
+  });
+}
+
+function getOptionBg(i) {
+  const colors = ['rgba(231,76,60,0.15)','rgba(74,158,255,0.15)','rgba(241,196,15,0.15)','rgba(39,174,96,0.15)'];
+  return colors[i % colors.length];
+}
+
+function selectOpt(opt, btn) {
+  // highlight
+  document.querySelectorAll('.option').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+
+  // accumulate scores
+  Object.entries(opt.scores).forEach(([k, v]) => { scores[k] += v; });
+
+  // next or finish
+  setTimeout(() => {
+    if (currentQ < QUESTIONS.length - 1) {
+      currentQ++;
+      renderQ();
+    } else {
+      showResult();
+    }
+  }, 350);
+}
+
+function showResult() {
+  // find dominant
+  const dominant = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+  const p = PERSONALITIES[dominant];
+
+  // style card
+  const card = document.getElementById('resultCard');
+  card.style.setProperty('border-top', `4px solid ${p.color}`);
+
+  document.getElementById('resultRing').style.cssText = `background:${p.css};box-shadow:0 0 40px ${p.color}55;color:#fff`;
+  document.getElementById('resultRing').textContent = p.emoji;
+  document.getElementById('resultRing').style.setProperty('border', `3px solid ${p.color}`);
+
+  document.getElementById('resultName').textContent = p.name;
+  document.getElementById('resultName').style.color = p.color;
+  document.getElementById('resultSubtitle').textContent = p.subtitle;
+
+  // traits
+  const traitRow = document.getElementById('traitRow');
+  traitRow.innerHTML = '';
+  p.traits.forEach(t => {
+    const tag = document.createElement('span');
+    tag.className = 'trait-tag';
+    tag.textContent = t;
+    tag.style.cssText = `color:${p.color};border-color:${p.color}55;background:${p.color}15`;
+    traitRow.appendChild(tag);
+  });
+
+  // spectrum
+  const spectrum = document.getElementById('colorSpectrum');
+  spectrum.innerHTML = '';
+  ['#e74c3c','#4a9eff','#f1c40f','#27ae60','#9b59b6'].forEach((c, i) => {
+    const span = document.createElement('span');
+    span.style.background = c;
+    spectrum.appendChild(span);
+  });
+
+  document.getElementById('resultDesc').innerHTML = p.desc;
+
+  showScene('result');
+}
+
+function restart() {
+  startTest();
+}
+
+function shareResult() {
+  const p = PERSONALITIES[Object.entries(scores).sort((a,b)=>b[1]-a[1])[0][0]];
+  const text = `我的色彩人格是「${p.name}」${p.emoji} — ${p.subtitle}。\n\n想知道你的色彩人格？戳👉 https://game.littleee.cloud`;
+  if (navigator.share) {
+    navigator.share({ title: '色彩心灵', text });
+  } else {
+    navigator.clipboard.writeText(text).then(() => alert('结果已复制到剪贴板！'));
+  }
+}
+</script>
+</body>
+</html>
