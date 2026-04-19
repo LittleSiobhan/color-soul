@@ -970,8 +970,10 @@ function showScene(id) {
 function startTest() {
   scores = { red: 0, blue: 0, yellow: 0, green: 0, purple: 0 };
   currentQ = 0;
+  console.log('startTest called, currentQ:', currentQ, 'QUESTIONS length:', QUESTIONS ? QUESTIONS.length : 'undefined');
   showScene('test');
   renderQ();
+  console.log('renderQ done, qNumber:', document.getElementById('qNumber').textContent);
 }
 window.testBtnClicked = false;
 document.addEventListener('DOMContentLoaded', function() {
