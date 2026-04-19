@@ -279,7 +279,10 @@
       flex-shrink: 0;
       padding: 16px;
       text-align: center;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
+    #testStartBtn { cursor: pointer; touch-action: manipulation; }
 
     /* ── TEST ── */
     #test { gap: 20px; width: 100%; max-width: 600px; }
@@ -753,7 +756,7 @@
 
 
     <div class="learn-bottom">
-      <button class="btn-primary" id="testStartBtn" onclick="startTest()">开始测试 →</button>
+      <button class="btn-primary" id="testStartBtn" onclick="try{startTest()}catch(e){console.error(e);}">开始测试 →</button>
       <div class="learn-skip">已经了解？<a href="#" onclick="startTest();return false;">跳过直接测试</a></div>
     </div>
   </div>
