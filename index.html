@@ -44,6 +44,8 @@
       animation: fadeIn 0.5s ease;
     }
     .scene.active { display: flex !important; }
+    .scene:not(.active) { display: none !important; visibility: hidden; }
+    #learn:not(.active) .learn-bottom { display: none; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
