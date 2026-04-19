@@ -677,21 +677,28 @@
     </div>  <!-- close learn-scroll -->
     <div class="learn-bottom">
       <button class="btn-primary" id="testStartBtn" onclick="startTest()">开始测试 →</button>
-      <div class="learn-skip">已经了解？<a href="#" onclick="startTest();return false;">跳过直接测试</a></div>
+      <div class="learn-skip">已经了解？<a href="#" onclick="startTest();return false">跳过直接测试</a></div>
     </div>
   </div>
 
   <!-- TEST -->
-  <div id="test" class="scene">
-    <div class="progress-row">
-      <div class="progress-bar" style="flex:1"><div class="progress-fill" id="progressFill"></div></div>
-      <div class="progress-label" id="progressLabel">1/12</div>
+  <div id="test" class="scene" style="display:none;">
+    <div class="progress-row" style="width:100%;max-width:600px;margin-bottom:20px;display:flex;align-items:center;gap:12px">
+      <div style="flex:1;height:6px;background:rgba(255,255,255,0.08);border-radius:3px">
+        <div id="progressFill" style="height:100%;width:8.3%;background:#c9a96e;border-radius:3px"></div>
+      </div>
+      <div id="progressLabel" style="font-size:12px;color:rgba(255,255,255,0.5);white-space:nowrap">1/12</div>
     </div>
-    <div class="question-card">
-      <div class="q-number" id="qNumber">题 1</div>
-      <div class="q-text" id="qText"></div>
-      <div class="q-sub" id="qSub"></div>
-      <div class="options" id="options"></div>
+    <div id="questionCard" style="width:100%;max-width:600px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:24px;padding:32px 24px;text-align:center">
+      <div id="qNumber" style="font-size:11px;letter-spacing:2px;color:#c9a96e;margin-bottom:16px">第 1 题</div>
+      <div id="qText" style="font-size:20px;color:#fff;margin-bottom:8px;line-height:1.5">清晨醒来，你最想要看到窗外是什么天气？</div>
+      <div id="qSub" style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:28px">想象一下，是你真实的渴望</div>
+      <div id="options" style="display:flex;flex-direction:column;gap:10px">
+        <button onclick="pick(0)" style="display:block;width:100%;padding:14px 16px;background:rgba(231,76,60,0.15);border:1px solid rgba(231,76,60,0.3);border-radius:12px;color:#fff;cursor:pointer;font-size:15px;text-align:left">☐&nbsp;&nbsp;阳光灿烂，万里无云</button>
+        <button onclick="pick(1)" style="display:block;width:100%;padding:14px 16px;background:rgba(74,158,255,0.15);border:1px solid rgba(74,158,255,0.3);border-radius:12px;color:#fff;cursor:pointer;font-size:15px;text-align:left">☐&nbsp;&nbsp;下着细雨，安静湿润</button>
+        <button onclick="pick(2)" style="display:block;width:100%;padding:14px 16px;background:rgba(39,174,96,0.15);border:1px solid rgba(39,174,96,0.3);border-radius:12px;color:#fff;cursor:pointer;font-size:15px;text-align:left">☐&nbsp;&nbsp;阴天，但空气清新</button>
+        <button onclick="pick(3)" style="display:block;width:100%;padding:14px 16px;background:rgba(155,89,182,0.15);border:1px solid rgba(155,89,182,0.3);border-radius:12px;color:#fff;cursor:pointer;font-size:15px;text-align:left">☐&nbsp;&nbsp;无所谓，窗帘拉上就好</button>
+      </div>
     </div>
   </div>
 
@@ -888,39 +895,30 @@ function showScene(id) {
 }
 
 function startTest() {
-  console.log('[DEBUG] startTest called');
   scores = { red: 0, blue: 0, yellow: 0, green: 0, purple: 0 };
   currentQ = 0;
-  try {
-    var td = document.getElementById('test');
-    console.log('[DEBUG] test div found:', !!td, td ? 'display='+window.getComputedStyle(td).display : '');
-    showScene('test');
-    console.log('[DEBUG] after showScene, test classList:', td ? td.classList.toString() : '');
-    renderQ();
-    console.log('[DEBUG] renderQ done');
-  } catch(e) {
-    console.error('[DEBUG] Error:', e.message, e.stack);
-    document.body.innerHTML = '<pre style="color:red">[JS ERROR] '+e.message+'\n'+e.stack+'</pre>';
-  }
+  showScene("test");
+  renderQ();
 }
-window.testBtnClicked = false;
-document.addEventListener('DOMContentLoaded', function() {
-  var btn = document.getElementById('testStartBtn');
-  if (btn) {
-    btn.addEventListener('click', function(e) {
-      e.preventDefault();
-      window.testBtnClicked = true;
-      startTest();
-    });
-  }
-  var skipBtn = document.querySelector('.learn-skip a');
-  if (skipBtn) {
-    skipBtn.addEventListener('click', function(e) {
-      e.preventDefault();
-      startTest();
-    });
-  }
-});
+function pick(idx) {
+  var q = QUESTIONS[currentQ];
+  var opt = q.opts[idx];
+  Object.entries(opt.scores).forEach(function(e){ scores[e[0]] += e[1]; });
+  var btns = document.querySelectorAll("#options button");
+  btns.forEach(function(b){ b.style.opacity = "0.3"; b.disabled = true; });
+  btns[idx].style.opacity = "1";
+  setTimeout(function() {
+    if (currentQ < QUESTIONS.length - 1) { currentQ++; renderQ(); } else { showResult(); }
+  }, 400);
+}
+// DOMContentLoaded already fired (script is at bottom of body)
+var btn = document.getElementById('testStartBtn');
+if (btn) {
+  btn.onclick = function(e) {
+    e.preventDefault();
+    startTest();
+  };
+}
 
 function showLearn() {
   showScene('learn');
