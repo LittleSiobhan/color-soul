@@ -43,7 +43,7 @@
       padding: 24px 16px;
       animation: fadeIn 0.5s ease;
     }
-    .scene.active { display: flex; }
+    .scene.active { display: flex !important; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
@@ -682,7 +682,7 @@
   </div>
 
   <!-- TEST -->
-  <div id="test" class="scene" style="display:none;">
+  <div id="test" class="scene">
     <div class="progress-row" style="width:100%;max-width:600px;margin-bottom:20px;display:flex;align-items:center;gap:12px">
       <div style="flex:1;height:6px;background:rgba(255,255,255,0.08);border-radius:3px">
         <div id="progressFill" style="height:100%;width:8.3%;background:#c9a96e;border-radius:3px"></div>
