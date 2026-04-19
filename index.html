@@ -970,10 +970,13 @@ function showScene(id) {
 function startTest() {
   scores = { red: 0, blue: 0, yellow: 0, green: 0, purple: 0 };
   currentQ = 0;
-  console.log('startTest called, currentQ:', currentQ, 'QUESTIONS length:', QUESTIONS ? QUESTIONS.length : 'undefined');
-  showScene('test');
-  renderQ();
-  console.log('renderQ done, qNumber:', document.getElementById('qNumber').textContent);
+  try {
+    showScene('test');
+    renderQ();
+  } catch(e) {
+    alert('Error in startTest: ' + e.message + '\n' + e.stack);
+    console.error(e);
+  }
 }
 window.testBtnClicked = false;
 document.addEventListener('DOMContentLoaded', function() {
@@ -1010,18 +1013,30 @@ function scrollToColor(colorId, btn) {
 
 function renderQ() {
   const q = QUESTIONS[currentQ];
-  document.getElementById('qNumber').textContent = `题 ${currentQ + 1}`;
-  document.getElementById('qText').textContent = q.q;
-  document.getElementById('qSub').textContent = q.sub;
+  if (!q) { alert('ERROR: q is undefined! currentQ='+currentQ); return; }
+  const qNum = document.getElementById('qNumber');
+  const qTxt = document.getElementById('qText');
+  const qSubEl = document.getElementById('qSub');
+  const optsEl = document.getElementById('options');
+  if (!qNum || !qTxt || !optsEl) { alert('ERROR: element not found. qNum='+qNum+', qTxt='+qTxt+', optsEl='+optsEl); return; }
+  qNum.textContent = `第 ${currentQ + 1} 题`;
+  qTxt.textContent = q.q;
+  qSubEl.textContent = q.sub || '';
   document.getElementById('progressLabel').textContent = `${currentQ + 1}/${QUESTIONS.length}`;
   document.getElementById('progressFill').style.width = `${((currentQ) / QUESTIONS.length) * 100}%`;
 
-  const optsEl = document.getElementById('options');
   optsEl.innerHTML = '';
   q.opts.forEach((opt, i) => {
     const btn = document.createElement('button');
     btn.className = 'option';
-    btn.innerHTML = `<span class="option-icon" style="background:${getOptionBg(i)}">${opt.icon}</span><span>${opt.text}</span>`;
+    btn.innerHTML = `<span class="option-icon">${opt.icon}</span><span>${opt.text}</span>`;
+    btn.style.display = 'block';
+    btn.style.padding = '14px 16px';
+    btn.style.background = 'rgba(255,255,255,0.05)';
+    btn.style.border = '1px solid rgba(255,255,255,0.1)';
+    btn.style.borderRadius = '12px';
+    btn.style.color = '#fff';
+    btn.style.cursor = 'pointer';
     btn.onclick = () => selectOpt(opt, btn);
     optsEl.appendChild(btn);
   });
