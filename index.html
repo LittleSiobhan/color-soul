@@ -1095,7 +1095,7 @@
       </div>
     </div>
     <div style="text-align:center;padding:16px">
-      <button onclick="startTest()" style="background:linear-gradient(135deg,#c9a96e,#a07830);color:#0a0a0f;border:none;padding:16px 48px;font-size:16px;font-weight:700;border-radius:100px;cursor:pointer;letter-spacing:1px;box-shadow:0 4px 24px rgba(201,169,110,0.3)">开始测试 →</button>
+      <button id="testStartBtn" onclick="startTest()" style="background:linear-gradient(135deg,#c9a96e,#a07830);color:#0a0a0f;border:none;padding:16px 48px;font-size:16px;font-weight:700;border-radius:100px;cursor:pointer;letter-spacing:1px;box-shadow:0 4px 24px rgba(201,169,110,0.3)">开始测试 →</button>
   </div>
 </div>
 
@@ -1310,6 +1310,11 @@ let scores = { red: 0, blue: 0, yellow: 0, green: 0, purple: 0 };
 function showScene(id) {
   document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  // Explicitly show/hide the start button
+  var btn = document.getElementById('testStartBtn');
+  if (btn) {
+    btn.style.display = (id === 'learn') ? 'inline-block' : 'none';
+  }
 }
 
 function startTest() {
@@ -1330,19 +1335,18 @@ function pick(idx) {
   }, 400);
 }
 // DOMContentLoaded already fired (script is at bottom of body)
+// Ensure button starts hidden until learn scene is shown
 var btn = document.getElementById('testStartBtn');
 if (btn) {
-  btn.onclick = function(e) {
-    e.preventDefault();
-    startTest();
-  };
+  btn.style.display = 'none';
 }
-
 function showLearn() {
   showScene('learn');
   document.querySelectorAll('.color-nav-btn').forEach(b => b.classList.remove('active'));
   const firstBtn = document.querySelector('.color-nav-btn');
   if (firstBtn) firstBtn.classList.add('active');
+  var btn = document.getElementById('testStartBtn');
+  if (btn) { btn.style.display = 'inline-block'; }
 }
 
 function scrollToColor(colorId, btn) {
